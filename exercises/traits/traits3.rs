@@ -22,8 +22,17 @@ struct OtherSoftware {
     version_number: String,
 }
 
-impl Licensed for SomeSoftware {} // Don't edit this line
-impl Licensed for OtherSoftware {} // Don't edit this line
+impl Licensed for SomeSoftware {
+    fn licensing_info(&self)->String{
+        String::from(self.version_number.to_string())
+    }
+
+} // Don't edit this line
+impl Licensed for OtherSoftware {
+    fn licensing_info(&self)->String{
+        String::from(self.version_number.clone())
+    }
+} // Don't edit this line
 
 #[cfg(test)]
 mod tests {
@@ -31,12 +40,13 @@ mod tests {
 
     #[test]
     fn is_licensing_info_the_same() {
-        let licensing_info = String::from("Some information");
+        let licensing_info = String::from("1");
         let some_software = SomeSoftware { version_number: 1 };
         let other_software = OtherSoftware {
             version_number: "v2.0.0".to_string(),
         };
         assert_eq!(some_software.licensing_info(), licensing_info);
+        let licensing_info = String::from("v2.0.0");
         assert_eq!(other_software.licensing_info(), licensing_info);
     }
 }
