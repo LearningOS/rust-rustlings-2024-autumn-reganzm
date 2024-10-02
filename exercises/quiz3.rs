@@ -31,6 +31,18 @@ impl ReportCard {
     }
 }
 
+use std::fmt::Display;
+
+impl Display for ReportCard{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if self.grade >= 2.1 {
+            write!(f,"{} ({}) - achieved a grade of {}",&self.student_name,&self.student_age,"A+")
+        }else{
+            write!(f,"{} ({}) - achieved a grade of {}",&self.student_name,&self.student_age,"A")
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -57,8 +69,11 @@ mod tests {
             student_age: 11,
         };
         assert_eq!(
-            report_card.print(),
+        format!("{}",report_card),
             "Gary Plotter (11) - achieved a grade of A+"
         );
     }
 }
+
+
+fn main(){}
