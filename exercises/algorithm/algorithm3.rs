@@ -5,8 +5,19 @@
 */
 // I AM NOT DONE
 
-fn sort<T>(array: &mut [T]){
-	//TODO
+fn sort<T: std::cmp::PartialOrd>(array: &mut [T]){
+    let mut left = array.len() - 1;
+    while left > 0 {
+        let mut pos_max = 0;
+        for i in 1..=left {
+            if array[i] > array[pos_max] {
+                pos_max = i;
+            }
+        }
+        // 交换数据，完成一轮数据的排序，并将待排序数据个数减1
+        array.swap(left, pos_max);
+        left -= 1;
+    }
 }
 #[cfg(test)]
 mod tests {
