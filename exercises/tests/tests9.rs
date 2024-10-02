@@ -34,10 +34,15 @@ extern "Rust" {
     fn my_demo_function_alias(a: u32) -> u32;
 }
 
-mod Foo {
+mod foo {
     // No `extern` equals `extern "Rust"`.
-    fn my_demo_function(a: u32) -> u32 {
+    #[no_mangle]
+    pub fn my_demo_function(a: u32) -> u32 {
         a
+    }
+    #[no_mangle]
+    pub fn my_demo_function_alias(a:u32)->u32{
+        my_demo_function(a)
     }
 }
 
@@ -59,3 +64,5 @@ mod tests {
         }
     }
 }
+
+fn main(){}
