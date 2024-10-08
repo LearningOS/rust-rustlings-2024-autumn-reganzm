@@ -1,22 +1,23 @@
 /*
-	heap
-	This question requires you to implement a binary heap function
+    heap
+    This question requires you to implement a binary heap function
 */
 // I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
+use std::fmt::Debug;
 
-pub struct Heap<T>
+pub struct Heap<T: PartialOrd>
 where
-    T: Default,
+    T: Default + Debug,
 {
     count: usize,
     items: Vec<T>,
     comparator: fn(&T, &T) -> bool,
 }
 
-impl<T> Heap<T>
+impl<T: PartialOrd + Debug> Heap<T>
 where
     T: Default,
 {
@@ -38,6 +39,55 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
+        self.items.push(value);
+        self.count += 1;
+        self.move_up(self.count);
+    }
+
+    fn move_up(&mut self, current_index: usize) {
+        let p = self.parent_idx(current_index);
+        if p > 0 {
+            if !(self.comparator)(&self.items[p], &self.items[current_index]) {
+                self.items.swap(p, current_index);
+                self.move_up(p);
+            }
+        }
+    }
+
+    fn pop(&mut self) -> Option<T> {
+        if self.is_empty() {
+            None
+        } else {
+            let result = self.items.swap_remove(1);
+            self.count -= 1;
+            if !self.is_empty() {
+                self.move_down(1);
+            }
+            Some(result)
+        }
+    }
+
+    fn move_down(&mut self, mut current_index: usize) {
+        println!("move down :{current_index}");
+        let left = self.left_child_idx(current_index);
+        let right = self.right_child_idx(current_index);
+        let mut largest_or_smallest = current_index;
+
+        if left < self.count
+            && (self.comparator)(&self.items[left], &self.items[largest_or_smallest])
+        {
+            largest_or_smallest = left;
+        }
+
+        if right < self.count
+            && (self.comparator)(&self.items[right], &self.items[largest_or_smallest])
+        {
+            largest_or_smallest = right;
+        }
+        if largest_or_smallest != current_index {
+            self.items.swap(largest_or_smallest, current_index);
+            self.move_down(largest_or_smallest);
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -57,12 +107,11 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+        0
     }
 }
 
-impl<T> Heap<T>
+impl<T: Debug> Heap<T>
 where
     T: Default + Ord,
 {
@@ -77,15 +126,14 @@ where
     }
 }
 
-impl<T> Iterator for Heap<T>
+impl<T: PartialOrd + Debug> Iterator for Heap<T>
 where
     T: Default,
 {
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        self.pop()
     }
 }
 
@@ -93,7 +141,7 @@ pub struct MinHeap;
 
 impl MinHeap {
     #[allow(clippy::new_ret_no_self)]
-    pub fn new<T>() -> Heap<T>
+    pub fn new<T: Debug>() -> Heap<T>
     where
         T: Default + Ord,
     {
@@ -105,7 +153,7 @@ pub struct MaxHeap;
 
 impl MaxHeap {
     #[allow(clippy::new_ret_no_self)]
-    pub fn new<T>() -> Heap<T>
+    pub fn new<T: Debug>() -> Heap<T>
     where
         T: Default + Ord,
     {
@@ -134,6 +182,7 @@ mod tests {
         assert_eq!(heap.next(), Some(4));
         assert_eq!(heap.next(), Some(9));
         heap.add(1);
+
         assert_eq!(heap.next(), Some(1));
     }
 
@@ -152,3 +201,4 @@ mod tests {
         assert_eq!(heap.next(), Some(2));
     }
 }
+
